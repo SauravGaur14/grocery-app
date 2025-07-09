@@ -7,15 +7,15 @@ import products from "../../src/data/products";
 
 export default function Home() {
   return (
-    <SafeAreaView className="flex-1  bg-white">
+    <SafeAreaView className="flex-1  bg-gray-100">
       <StatusBar style="dark" />
-      <View className="flex-1 bg-white">
+      <View className="flex-1 bg-gray-100">
         <FlatList
           data={products}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <ProductCard product={item} />}
           numColumns={2}
-          contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+          contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         />
       </View>
     </SafeAreaView>
