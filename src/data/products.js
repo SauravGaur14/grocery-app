@@ -1,0 +1,51 @@
+export default [
+  {
+    id: "1",
+    name: "Apple",
+    description: "Fresh red apples",
+    price: 150,
+    category: "Fruits",
+    image:
+      "https://pngcore.com/files/preview/900x545/11688461179v9lmybwpi7oea23f2ugrhvlvpkedbdb6j1pzqzhuabvbfd6dnjeveyyzhbm6keucbtggezxzptphhtcum7xvzgeqqzuy0ejitzuw.png",
+  },
+  {
+    id: "2",
+    name: "Orange",
+    description: "Ripe oranges",
+    price: 100,
+    category: "Fruits",
+    image: "https://pngimg.com/d/orange_PNG794.png",
+  },
+  {
+    id: "3",
+    name: "Broccoli",
+    description: "Fresh broccoli",
+    price: 60,
+    category: "Vegetables",
+    image: "https://pngimg.com/uploads/broccoli/broccoli_PNG72870.png",
+  },
+  {
+    id: "4",
+    name: "Milk",
+    description: "Organic milk - 1L",
+    price: 50,
+    category: "Dairy",
+    image: "https://pngimg.com/d/milk_PNG12725.png",
+  },
+  {
+    id: "5",
+    name: "Bread",
+    description: "Whole wheat bread",
+    price: 40,
+    category: "Bakery",
+    image: "https://freepngimg.com/save/22809-bread-clipart/1280x853",
+  },
+  {
+    id: "6",
+    name: "Tomato",
+    description: "Juicy red tomatoes",
+    price: 30,
+    category: "Vegetables",
+    image: "https://pngimg.com/uploads/tomato/tomato_PNG12567.png",
+  },
+];
