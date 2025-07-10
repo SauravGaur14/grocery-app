@@ -11,7 +11,7 @@ export default function CartButton() {
 
   // Hide if no items or on certain routes
   if (cartItems.length === 0) return null;
-  const hiddenRoutes = ["/cart", "/checkout", "/orders"];
+  const hiddenRoutes = ["/cart", "/checkout", "/orders", "/profile"];
   if (hiddenRoutes.includes(pathname)) return null;
 
   const totalQty = cartItems.reduce((sum, item) => sum + item.quantity, 0);

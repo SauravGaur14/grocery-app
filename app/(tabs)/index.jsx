@@ -7,9 +7,9 @@ import products from "../../src/data/products";
 
 export default function Home() {
   return (
-    <SafeAreaView className="flex-1  bg-gray-100">
+    <SafeAreaView className="flex-1  bg-white">
       <StatusBar style="dark" />
-      <View className="flex-1 bg-gray-100">
+      <View className="flex-1 bg-white">
         <FlatList
           data={products}
           keyExtractor={(item) => item.id}

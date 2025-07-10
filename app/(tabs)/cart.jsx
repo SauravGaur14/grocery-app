@@ -10,7 +10,7 @@ export default function Cart() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100">
+    <SafeAreaView className="flex-1 bg-white">
       {items.length === 0 ? (
         <View className="flex-1 items-center justify-center">
           <Text className="text-lg">Cart is empty</Text>
@@ -50,23 +50,21 @@ export default function Cart() {
             contentContainerStyle={{ paddingBottom: 50 }}
           />
 
-          <View className="absolute bottom-4 left-4 right-4">
-            <View className="border-t border-gray-300 pt-4">
-              <Text className="text-xl font-bold">
-                Total: ₹
-                {items.reduce(
-                  (total, item) => total + item.price * item.quantity,
-                  0
-                )}
-              </Text>
-              <TouchableOpacity onPress={() => router.push("/order/address")}>
-                <View className="mt-3 bg-green-500 py-3 rounded-full items-center">
-                  <Text className="text-white text-lg font-semibold">
-                    Proceed to Order
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+          <View className="absolute bottom-0 left-5 right-5">
+            <TouchableOpacity onPress={() => router.push("/checkout")}>
+              <View className="flex-row mt-3 bg-green-500 py-4 rounded-full items-center justify-center gap-x-5">
+                <Text className="text-white text-xl font-semibold">
+                  Proceed to Order
+                </Text>
+                <Text className="text-base font-bold text-gray-700">
+                  Total: ₹
+                  {items.reduce(
+                    (total, item) => total + item.price * item.quantity,
+                    0
+                  )}
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       )}
