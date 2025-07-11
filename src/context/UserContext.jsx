@@ -1,12 +1,12 @@
 import * as Location from "expo-location";
 import { createContext, useContext, useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState({
-    name: "John Doe",
+    name: "John",
     email: "john@gmail.com",
     phone: "+91 7010101010",
     addresses: [],
@@ -19,7 +19,14 @@ export const UserProvider = ({ children }) => {
         console.warn("Location permission not granted.");
         Alert.alert(
           "Permission Denied",
-          "Please allow location permission in settings."
+          "Please allow location permission in settings.",
+          [
+            {
+              text: "Open Settings",
+              onPress: () => Linking.openSettings(),
+            },
+            { text: "Cancel", style: "cancel" },
+          ]
         );
         return;
       }
@@ -48,12 +55,26 @@ export const UserProvider = ({ children }) => {
         error?.message?.includes("Location request failed")
       ) {
         Alert.alert(
-          "Enable Location",
-          "Please turn on your device's GPS/location services and try again."
+          "Enable GPS",
+          "Please turn on your device's GPS/location services and try again.",
+          [
+            {
+              text: "Retry",
+              onPress: getLocation, // Retry getting location
+            },
+            Platform.OS === "android"
+              ? {
+                  text: "Settings",
+                  onPress: () => Linking.openSettings(), //  Open system settings
+                }
+              : null,
+            { text: "Cancel", style: "cancel" },
+          ].filter(Boolean) //  filters out `null` on iOS
         );
       } else {
         Alert.alert("Location Error", "Failed to get your location.");
       }
+
       console.error("Error getting user location:", error);
     }
   };
