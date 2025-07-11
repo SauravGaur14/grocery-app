@@ -23,12 +23,13 @@ export default [
   {
     id: "3",
     rating: 4.7,
-    name: "Broccoli",
+    name: "Veggies",
     description:
       "Fresh, locally sourced broccoli florets full of nutrients. A versatile vegetable great for steaming, roasting, or stir-frying.",
     price: 60,
     category: "Vegetables",
-    image: "https://pngimg.com/uploads/broccoli/broccoli_PNG72870.png",
+    image:
+      "https://www.freepnglogos.com/uploads/vegetables-png/fruit-and-vegetables-basket-png-20.png",
   },
   {
     id: "4",

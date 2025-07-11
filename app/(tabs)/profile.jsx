@@ -2,12 +2,11 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {} from "react-native-web";
-import user from "../../src/data/user.json";
+import { useUser } from "../../src/context/UserContext";
 
 export default function ProfileScreen() {
   const router = useRouter();
-
+  const { user } = useUser();
   return (
     <SafeAreaView className="flex-1 bg-white px-5 pt-5">
       <ScrollView>
@@ -49,7 +48,6 @@ export default function ProfileScreen() {
   );
 }
 
-// ✅ Reusable info row
 function InfoRow(icon, label) {
   return (
     <View key={icon} className="flex-row items-center mb-3">
@@ -61,7 +59,6 @@ function InfoRow(icon, label) {
   );
 }
 
-// ✅ Reusable nav row (for all clickable options)
 function NavRow(icon, label, onPress) {
   return (
     <TouchableOpacity

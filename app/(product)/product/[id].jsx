@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
@@ -21,6 +22,7 @@ const { width } = Dimensions.get("window");
 export default function ProductInfo() {
   const { id } = useLocalSearchParams();
   const product = products.find((p) => p.id === id);
+  const navigation = useNavigation();
 
   const { addItem, cart } = useCart();
   const isInCart = !!cart[product.id];
@@ -43,6 +45,11 @@ export default function ProductInfo() {
 
   return (
     <SafeAreaView style={{ flex: 1 }} className="bg-white">
+      <View className="flex-row items-center mb-4 p-3">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3">
+          <Feather name="arrow-left" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Carousel */}
         <FlatList

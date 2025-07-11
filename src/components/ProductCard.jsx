@@ -15,9 +15,6 @@ export default function ProductCard({ product }) {
           className="w-32 h-32"
           resizeMode="contain"
         />
-        {/* <View className="">
-          <Text className="text-gray-500 text-base">{product.description}</Text>
-        </View> */}
         <QuantitySelector item={product} />
       </TouchableOpacity>
     </Link>
