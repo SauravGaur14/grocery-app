@@ -1,4 +1,7 @@
+import { Feather } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
 import {
+  FlatList,
   Modal,
   Pressable,
   Text,
@@ -6,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useUser } from "../../context/UserContext";
 
 export default function AddressModal({
   visible,
@@ -13,21 +17,103 @@ export default function AddressModal({
   addressFields,
   setAddressFields,
 }) {
-  const handleChange = (key, value) => {
-    setAddressFields((prev) => ({ ...prev, [key]: value }));
-  };
+  const { user, addAddress } = useUser();
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
 
   const isFormComplete = ["houseNumber", "city", "state", "pincode"].every(
     (key) => addressFields[key]?.trim() !== ""
   );
 
+  const handleChange = (key, value) => {
+    setAddressFields((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSave = () => {
+    addAddress(addressFields);
+    onClose();
+  };
+
+  const resetForm = () => {
+    setAddressFields({
+      houseNumber: "",
+      city: "",
+      state: "",
+      pincode: "",
+    });
+  };
+
+  useEffect(() => {
+    if (visible) {
+      // Reset to first address or clear form
+      if (user.addresses.length > 0) {
+        const address = user.addresses[selectedAddressIndex];
+        if (address) setAddressFields(address);
+      } else {
+        resetForm();
+      }
+    }
+  }, [visible, selectedAddressIndex]);
+
+  // Combine saved addresses + Add New button
+  const addressList = [...user.addresses, { isAddNew: true }];
+
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View className="flex-1 justify-end bg-black/40">
         <Pressable className="flex-1" onPress={onClose} />
-      <View className="bg-white rounded-t-3xl p-5 pb-8">
-          <Text className="text-xl font-bold mb-4">Edit Delivery Address</Text>
+        <View className="bg-white rounded-t-3xl p-5 pb-8 max-h-[85%]">
+          <Text className="text-xl font-bold mb-4">
+            {user.addresses.length > 0
+              ? "Edit Delivery Address"
+              : "Add Address"}
+          </Text>
 
+          {/* Address Pills */}
+          {user.addresses.length > 0 && (
+            <FlatList
+              data={addressList}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(_, index) => index.toString()}
+              contentContainerStyle={{ marginBottom: 16 }}
+              renderItem={({ item, index }) => {
+                if (item.isAddNew) {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => {
+                        resetForm();
+                        setSelectedAddressIndex(index);
+                      }}
+                      className="flex-row items-center px-4 py-2 rounded-full border bg-blue-100 border-blue-300 mr-2"
+                    >
+                      <Feather name="plus" size={16} color="#2563EB" />
+                      <Text className="ml-2 text-blue-600 font-medium">
+                        Add New
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }
+
+                const isSelected = index === selectedAddressIndex;
+                return (
+                  <TouchableOpacity
+                    onPress={() => setSelectedAddressIndex(index)}
+                    className={`px-4 py-2 rounded-full border ${
+                      isSelected
+                        ? "bg-green-500 border-green-600"
+                        : "bg-gray-200"
+                    } mr-2`}
+                  >
+                    <Text className={isSelected ? "text-white" : "text-black"}>
+                      {item.houseNumber}, {item.city}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }}
+            />
+          )}
+
+          {/* Address Form */}
           {["houseNumber", "city", "state", "pincode"].map((key, index) => (
             <TextInput
               key={index}
@@ -44,9 +130,10 @@ export default function AddressModal({
             />
           ))}
 
+          {/* Save Button */}
           <TouchableOpacity
             disabled={!isFormComplete}
-            onPress={onClose}
+            onPress={handleSave}
             className={`py-3 rounded-full items-center mt-2 ${
               isFormComplete ? "bg-green-500" : "bg-gray-400"
             }`}
