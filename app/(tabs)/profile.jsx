@@ -6,7 +6,7 @@ import { useUser } from "../../src/context/UserContext";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, logout } = useUser();
   return (
     <SafeAreaView className="flex-1 bg-white px-5 pt-5">
       <ScrollView>
@@ -17,9 +17,9 @@ export default function ProfileScreen() {
           <Text className="text-xl font-semibold text-gray-800 mb-4">
             Personal Info
           </Text>
-          {InfoRow("user", user.name)}
-          {InfoRow("phone", user.phone)}
-          {InfoRow("mail", user.email)}
+          {InfoRow("user", user?.name)}
+          {InfoRow("phone", user?.phone)}
+          {InfoRow("mail", user?.email)}
         </View>
 
         {/* Orders & Wishlist */}
@@ -41,7 +41,7 @@ export default function ProfileScreen() {
           </Text>
           {NavRow("help-circle", "Support", () => {})}
           {NavRow("info", "About Us", () => {})}
-          {NavRow("log-out", "Logout", () => {})}
+          {NavRow("log-out", "Logout", logout)}
         </View>
       </ScrollView>
     </SafeAreaView>

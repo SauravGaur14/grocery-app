@@ -1,0 +1,86 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { useUser } from "../../src/context/UserContext";
+
+export default function OtpScreen() {
+  const { phone } = useLocalSearchParams();
+  const { login } = useUser();
+  const router = useRouter();
+  const [otp, setOtp] = useState("");
+  const [inputFocused, setInputFocused] = useState(false);
+
+  if (!phone) {
+    return (
+      <View className="flex-1 justify-center items-center px-6 bg-white">
+        <Text className="text-red-500 text-lg font-semibold text-center">
+          Invalid phone number. Please go back and try again.
+        </Text>
+      </View>
+    );
+  }
+
+  const handleVerify = () => {
+    if (otp.trim() === "123456") {
+      login(phone);
+      router.replace("/"); // Redirect to home
+    } else {
+      alert("Incorrect OTP. Try 123456");
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      className="flex-1 bg-gray-50"
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View className="flex-1 justify-center px-6">
+        {/* Heading */}
+        <View className="mb-8">
+          <Text className="text-3xl font-bold text-center text-green-600">
+            Verify OTP
+          </Text>
+          <Text className="text-base text-center text-gray-500 mt-2">
+            Enter the 6-digit OTP sent to{" "}
+            <Text className="font-semibold text-gray-700">{phone}</Text>
+          </Text>
+        </View>
+
+        {/* Card Container */}
+        <View className="">
+          <TextInput
+            keyboardType="numeric"
+            maxLength={6}
+            value={otp}
+            onChangeText={setOtp}
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
+            placeholder="Enter 6-digit OTP"
+            className={`text-base px-4 py-3 rounded-full border mb-4 ${
+              inputFocused ? "border-green-500" : "border-gray-300"
+            } text-gray-800`}
+          />
+
+          <Pressable
+            onPress={handleVerify}
+            disabled={otp.trim().length !== 6}
+            className={`py-4 rounded-full active:scale-95 ${
+              otp.trim().length === 6 ? "bg-green-600" : "bg-gray-300"
+            }`}
+          >
+            <Text className="text-white text-center font-semibold text-lg">
+              Verify OTP
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
+}

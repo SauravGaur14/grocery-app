@@ -106,7 +106,7 @@ export default function MapPicker() {
         router.replace({
           pathname: "/checkout",
           params: {
-            selectedFromMap: JSON.stringify(added), // pass the new address back
+            selectedFromMap: JSON.stringify(added),
           },
         });
       } else {

@@ -9,7 +9,7 @@ import products from "../../src/data/products";
 
 export default function Home() {
   const { user, locationPermissionGranted, gpsEnabled } = useUser();
-  const currentAddress = user.addresses[0];
+  const currentAddress = user?.addresses?.[0];
 
   return (
     <SafeAreaView className="flex-1  bg-white">
@@ -18,7 +18,7 @@ export default function Home() {
         Delivering to:
       </Text>
       <Text className="text-sm font-bold px-5 mb-4 text-green-700">
-        {currentAddress
+        {user && currentAddress
           ? `${currentAddress.houseNumber}, ${currentAddress.city}, ${currentAddress.state}`
           : "Fetching your location..."}
       </Text>

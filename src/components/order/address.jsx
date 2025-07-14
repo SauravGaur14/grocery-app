@@ -88,15 +88,15 @@ export default function AddressModal({
       <View className="flex-1 justify-end bg-black/40">
         <Pressable className="flex-1" onPress={onClose} />
         <View className="bg-white rounded-t-3xl p-5 pb-8 max-h-[85%]">
-          <View className="flex-row items-center justify-between">
-            <Text className="text-xl font-bold mb-4">
+          <View className="flex-row items-center justify-between mb-4 ">
+            <Text className="text-xl font-bold">
               {user.addresses.length > 0
                 ? "Edit Delivery Address"
                 : "Add Address"}
             </Text>
             <TouchableOpacity
               onPress={handleOpenMap}
-              className="bg-blue-500 rounded-full p-3 mb-4 items-center"
+              className="bg-blue-500 rounded-full p-3 items-center"
             >
               <Text className="text-white font-semibold">Pick from Map</Text>
             </TouchableOpacity>
