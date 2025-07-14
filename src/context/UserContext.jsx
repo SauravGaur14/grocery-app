@@ -1,6 +1,5 @@
 import * as Location from "expo-location";
 import { createContext, useContext, useEffect, useState } from "react";
-import { Alert, Linking, Platform } from "react-native";
 
 export const UserContext = createContext();
 
@@ -11,27 +10,25 @@ export const UserProvider = ({ children }) => {
     phone: "+91 7010101010",
     addresses: [],
   });
+  const [locationPermissionGranted, setLocationPermissionGranted] =
+    useState(false);
+  const [gpsEnabled, setGpsEnabled] = useState(true);
 
   const getLocation = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
+
       if (status !== "granted") {
-        console.warn("Location permission not granted.");
-        Alert.alert(
-          "Permission Denied",
-          "Please allow location permission in settings.",
-          [
-            {
-              text: "Open Settings",
-              onPress: () => Linking.openSettings(),
-            },
-            { text: "Cancel", style: "cancel" },
-          ]
-        );
+        setLocationPermissionGranted(false);
+        setGpsEnabled(false); // can't get location
         return;
       }
 
+      setLocationPermissionGranted(true);
+
       const location = await Location.getCurrentPositionAsync({});
+      setGpsEnabled(true); // successfully got location
+
       const geocoded = await Location.reverseGeocodeAsync(location.coords);
 
       if (geocoded.length > 0) {
@@ -50,32 +47,7 @@ export const UserProvider = ({ children }) => {
         }));
       }
     } catch (error) {
-      if (
-        error?.message?.includes("unsatisfied device settings") ||
-        error?.message?.includes("Location request failed")
-      ) {
-        Alert.alert(
-          "Enable GPS",
-          "Please turn on your device's GPS/location services and try again.",
-          [
-            {
-              text: "Retry",
-              onPress: getLocation, // Retry getting location
-            },
-            Platform.OS === "android"
-              ? {
-                  text: "Settings",
-                  onPress: () => Linking.openSettings(), //  Open system settings
-                }
-              : null,
-            { text: "Cancel", style: "cancel" },
-          ].filter(Boolean) //  filters out `null` on iOS
-        );
-      } else {
-        Alert.alert("Location Error", "Failed to get your location.");
-      }
-
-      console.error("Error getting user location:", error);
+      setGpsEnabled(false);
     }
   };
 
@@ -91,17 +63,31 @@ export const UserProvider = ({ children }) => {
       addressObj.state &&
       addressObj.pincode
     ) {
-      setUser((prev) => ({
-        ...prev,
-        addresses: [...prev.addresses, addressObj],
-      }));
+      setUser((prev) => {
+        const updated = {
+          ...prev,
+          addresses: [...prev.addresses, addressObj],
+        };
+        return updated;
+      });
+      return addressObj; //  return the added address
     } else {
       console.warn("Invalid address object passed to addAddress.");
+      return null;
     }
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, addAddress }}>
+    <UserContext.Provider
+      value={{
+        user,
+        setUser,
+        addAddress,
+        locationPermissionGranted,
+        gpsEnabled,
+        getLocation,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

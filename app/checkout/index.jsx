@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AddressModal from "../../src/components/order/address";
@@ -43,6 +43,21 @@ export default function CheckoutScreen() {
     clearCart();
     setOrderPlaced(true);
   };
+
+  const { selectedFromMap } = useLocalSearchParams();
+
+  useEffect(() => {
+    if (selectedFromMap) {
+      try {
+        const parsed = JSON.parse(selectedFromMap);
+        if (parsed && parsed.pincode) {
+          setAddressFields(parsed);
+        }
+      } catch (e) {
+        console.warn("Failed to parse selected address from map");
+      }
+    }
+  }, [selectedFromMap]);
 
   if (orderPlaced) {
     return (
