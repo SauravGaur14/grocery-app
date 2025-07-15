@@ -34,9 +34,10 @@ export default function CheckoutScreen() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
 
-  const isAddressComplete = Object.values(addressFields).every(
-    (val) => val.trim() !== ""
+  const isAddressComplete = ["houseNumber", "city", "state", "pincode"].every(
+    (key) => String(addressFields[key] ?? "").trim() !== ""
   );
+
   const isReadyToPlace = isAddressComplete && selectedPayment;
 
   const handlePlaceOrder = () => {

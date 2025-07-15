@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -27,12 +28,30 @@ export default function OtpScreen() {
     );
   }
 
-  const handleVerify = () => {
-    if (otp.trim() === "123456") {
-      login(phone);
-      router.replace("/"); // Redirect to home
-    } else {
-      alert("Incorrect OTP. Try 123456");
+  const handleVerify = async () => {
+    if (otp.trim().length !== 6) {
+      alert("Please enter a valid 6-digit OTP");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://192.168.1.8:3000/verify-otp",
+        {
+          phone: `+91${phone}`,
+          otp: otp.trim(),
+        }
+      );
+
+      if (response.data.success) {
+        await login(`+91${phone}`);
+        router.replace("/");
+      } else {
+        alert("Incorrect OTP. Please try again.");
+      }
+    } catch (error) {
+      console.warn("OTP verification failed:", error);
+      alert("Something went wrong. Please try again.");
     }
   };
 

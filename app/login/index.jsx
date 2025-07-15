@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
 
 export default function LoginScreen() {
   const [phone, setPhone] = useState("");
@@ -21,18 +22,38 @@ export default function LoginScreen() {
 
   const isValidPhone = /^\d{10}$/.test(phone);
 
-  const handleSendOtp = () => {
-    if (!agreed) {
-      alert("You must agree to the terms and conditions.");
-      return;
-    }
+const handleSendOtp = async () => {
+  if (!agreed) {
+    alert("You must agree to the terms and conditions.");
+    return;
+  }
 
-    if (isValidPhone) {
-      router.push({ pathname: "/login/otp", params: { phone } });
-    } else {
-      alert("Please enter a valid 10-digit phone number");
-    }
-  };
+  if (!isValidPhone) {
+    alert("Please enter a valid 10-digit phone number");
+    return;
+  }
+
+  try {
+    const response = await axios.post("http://192.168.1.8:3000/send-otp", {
+      phone: `+91${phone}`,
+    });
+
+    // Optionally store OTP in dev for testing
+    const { otp } = response.data;
+
+    router.push({
+      pathname: "/login/otp",
+      params: {
+        phone,
+        otp: otp?.toString() || "", // for dev only — remove in prod
+      },
+    });
+  } catch (err) {
+    console.error("Failed to send OTP:", err.message);
+    alert("Failed to send OTP. Please try again.");
+  }
+};
+
 
   return (
     <SafeAreaView className="flex-1 px-2 pt-10">

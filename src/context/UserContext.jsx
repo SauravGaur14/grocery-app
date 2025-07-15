@@ -90,27 +90,36 @@ export const UserProvider = ({ children }) => {
     }
   }, [user?.phone, hasFetchedLocation]);
 
-  const addAddress = (addressObj) => {
-    if (
-      addressObj &&
-      addressObj.houseNumber &&
-      addressObj.city &&
-      addressObj.state &&
-      addressObj.pincode
-    ) {
-      setUser((prev) => {
-        const updated = {
-          ...prev,
-          addresses: [...prev.addresses, addressObj],
-        };
-        return updated;
-      });
-      return addressObj; //  return the added address
-    } else {
-      console.warn("Invalid address object passed to addAddress.");
-      return null;
-    }
-  };
+const addAddress = (addressObj) => {
+  if (
+    addressObj &&
+    addressObj.houseNumber &&
+    addressObj.city &&
+    addressObj.state &&
+    addressObj.pincode
+  ) {
+    setUser((prev) => {
+      const alreadyExists = prev.addresses.some(
+        (addr) =>
+          addr.latitude === addressObj.latitude &&
+          addr.longitude === addressObj.longitude
+      );
+
+      const updated = {
+        ...prev,
+        addresses: alreadyExists
+          ? prev.addresses
+          : [...prev.addresses, addressObj],
+      };
+      return updated;
+    });
+    return addressObj;
+  } else {
+    console.warn("Invalid address object passed to addAddress.");
+    return null;
+  }
+};
+
 
   const login = async (phoneNumber) => {
     const authData = { phone: phoneNumber };

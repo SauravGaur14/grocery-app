@@ -17,6 +17,7 @@ export default function CartButton() {
     "/orders",
     "/profile",
     "/mapPicker",
+    "/login",
   ];
   if (hiddenRoutes.includes(pathname)) return null;
 

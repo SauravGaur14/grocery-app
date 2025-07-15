@@ -22,7 +22,7 @@ export default function AddressModal({
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
 
   const isFormComplete = ["houseNumber", "city", "state", "pincode"].every(
-    (key) => addressFields[key]?.trim() !== ""
+    (key) => String(addressFields[key] ?? "").trim() !== ""
   );
 
   const router = useRouter();
@@ -43,9 +43,8 @@ export default function AddressModal({
     router.push({
       pathname: "/mapPicker",
       params: {
-        onSelectAddress: (address) => {
-          setAddressFields(address);
-        },
+        latitude: addressFields?.latitude ?? "",
+        longitude: addressFields?.longitude ?? "",
       },
     });
   };
@@ -81,7 +80,8 @@ export default function AddressModal({
   }, [visible, selectedAddressIndex]);
 
   // Combine saved addresses + Add New button
-  const addressList = [...user.addresses, { isAddNew: true }];
+  const addressList = [...user.addresses];
+  // const addressList = [...user.addresses, { isAddNew: true }];
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
