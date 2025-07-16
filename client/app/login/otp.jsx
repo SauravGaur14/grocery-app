@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import { useUser } from "../../src/context/UserContext";
 
+import { API_BASE_URL } from "../../src/utils/config";
+
 export default function OtpScreen() {
   const { phone } = useLocalSearchParams();
   const { login } = useUser();
@@ -35,13 +37,10 @@ export default function OtpScreen() {
     }
 
     try {
-      const response = await axios.post(
-        "http://192.168.1.8:3000/verify-otp",
-        {
-          phone: `+91${phone}`,
-          otp: otp.trim(),
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/verify-otp`, {
+        phone: `+91${phone}`,
+        otp: otp.trim(),
+      });
 
       if (response.data.success) {
         await login(`+91${phone}`);

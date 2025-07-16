@@ -1,39 +1,66 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# === ROOT ===
 node_modules/
-
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
-
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
+.env
+.env.*.local
 .DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
+*.log
 *.tsbuildinfo
+*.lock
+*.swp
+*.orig.*
+*.iml
+*.pem
+.idea/
+.vscode/
+*.crash
+*.stackdump
 
-app-example
+# === CLIENT ===
+client/node_modules/
+client/.expo/
+client/.expo-shared/
+client/dist/
+client/web-build/
+client/expo-env.d.ts
+
+client/coverage/
+client/*.bundle
+client/*.map
+client/*.tsbuildinfo
+client/.eslintcache
+client/.prettiercache
+
+# Client local env
+client/.env
+client/.env.*.local
+
+# Android/iOS placeholders (in case added later)
+client/android/.gradle/
+client/android/build/
+client/android/local.properties
+client/ios/build/
+client/ios/Pods/
+client/ios/*.xcworkspace
+client/ios/*.xcuserdata
+client/ios/*.xcodeproj/*
+!client/ios/*.xcodeproj/project.pbxproj
+
+# === SERVER ===
+server/node_modules/
+server/.env
+server/.env.*.local
+server/coverage/
+server/*.log
+server/*.tsbuildinfo
+
+# === TESTING ===
+jest-*
+coverage/
+
+# === BUNDLER / METRO ===
+.metro-cache/
+.watchmanconfig
+
+# === PACKAGE LOCKS ===
+client/package-lock.json
+server/package-lock.json
