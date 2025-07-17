@@ -109,7 +109,7 @@ export default function ProductInfo() {
           </Text>
           <View className="flex-row flex-wrap justify-between">
             {recommended.map((item) => (
-              <View key={item.id} className="w-[48%] mb-4">
+              <View key={item.id} className="w-[50%]">
                 <ProductCard product={item} />
               </View>
             ))}
@@ -118,7 +118,7 @@ export default function ProductInfo() {
       </ScrollView>
 
       {/* Bottom Fixed Add to Cart or Quantity Selector */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 flex-row items-center justify-between">
+      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 flex-row items-baseline justify-between">
         <Text className="text-xl font-semibold text-green-700">
           ₹{product.price}
         </Text>
@@ -133,7 +133,9 @@ export default function ProductInfo() {
             </Text>
           </TouchableOpacity>
         ) : (
-          <QuantitySelector item={product} />
+          <View className="max-w-44">
+            <QuantitySelector item={product} />
+          </View>
         )}
       </View>
     </SafeAreaView>

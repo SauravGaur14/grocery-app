@@ -18,13 +18,25 @@ export default function CartButton() {
     "/profile",
     "/mapPicker",
     "/login",
+    "/login/otp",
   ];
   if (hiddenRoutes.includes(pathname)) return null;
 
   const totalQty = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <View className="absolute bottom-24 left-0 right-0 items-center z-50">
+    <View
+      style={{
+        position: "absolute",
+        bottom: 100,
+        left: "50%",
+        transform: [{ translateX: -88 }], // Half of w-44 (176px)
+        zIndex: 50,
+        width: 176,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <TouchableOpacity
         onPress={() => router.push("/cart")}
         className="bg-green-500 px-5 py-3 rounded-full items-center shadow-lg"

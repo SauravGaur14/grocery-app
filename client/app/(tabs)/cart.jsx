@@ -1,7 +1,14 @@
 import { useRouter } from "expo-router";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { useRef, useState } from "react";
+import {
+  Animated,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import QuantitySelector from "../../src/components/QuantitySelector";
+import CartItem from "../../src/components/CartItem";
 import { useCart } from "../../src/context/CartContext";
 
 export default function Cart() {
@@ -9,65 +16,79 @@ export default function Cart() {
   const items = Object.values(cart);
   const router = useRouter();
 
+  const subtotal = items.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+  const total = subtotal * 0.9;
+
+  // Animated values
+  const animatedSubtotal = useRef(new Animated.Value(0)).current;
+  const animatedTotal = useRef(new Animated.Value(0)).current;
+
+  // Number state to show
+  const [displayedSubtotal, setDisplayedSubtotal] = useState(0);
+  const [displayedTotal, setDisplayedTotal] = useState(0);
+
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {items.length === 0 ? (
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-lg">Cart is empty</Text>
-        </View>
-      ) : (
-        <View className="flex-1 p-4">
-          <FlatList
-            data={items}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View className="bg-white p-4 mb-4 rounded-2xl">
-                <View className="flex-row items-center justify-between w-full space-x-3">
-                  <Image
-                    source={{ uri: item.image }}
-                    className="w-20 h-20 rounded-lg"
-                    resizeMode="contain"
-                  />
+      {/* Header */}
 
-                  <View className="">
-                    <Text className="text-lg font-semibold">{item.name}</Text>
-                    <View className="flex flex-row items-center justify-between">
-                      <Text className="text-gray-600 text-sm">
-                        ₹{item.price} × {item.quantity} {" : "}
-                      </Text>
-                      <Text className="text-green-700 font-semibold text-base mt-1">
-                        ₹{item.price * item.quantity}
-                      </Text>
-                    </View>
-                  </View>
+      <View className="flex-row items-center p-5">
+        <Text className="text-3xl font-bold">Cart</Text>
+      </View>
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: items.length === 1 ? 70 : 10,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="justify-between min-h-full">
+          {items.length === 0 ? (
+            <View className="flex-1 items-center justify-center">
+              <Text className="text-lg">Cart is empty</Text>
+            </View>
+          ) : (
+            <View className="px-4">
+              {items.map((item) => (
+                <CartItem key={item.id} item={item} />
+              ))}
+            </View>
+          )}
 
-                  <View className="items-end gap-5">
-                    <QuantitySelector item={item} />
-                  </View>
+          {/* Summary Card */}
+          {items.length > 0 && (
+            <View className="bg-gray-100 border border-gray-100 rounded-t-3xl mt-4 p-5 w-full">
+              <View className="flex-row justify-between mb-2">
+                <Text className="text-base text-gray-600">Subtotal</Text>
+                <Text className="text-base text-gray-800">₹{subtotal}</Text>
+              </View>
+
+              {/* <View className="flex-row justify-between mb-2">
+                <Text className="text-base text-gray-600">Discount</Text>
+                <Text className="text-base text-red-500">10%</Text>
+              </View>
+
+              <View className="flex-row justify-between mb-4">
+                <Text className="text-lg font-semibold">
+                  Total ({items.length} items)
+                </Text>
+                <Text className="text-lg font-semibold text-green-600">
+                  ₹{total}
+                </Text>
+              </View> */}
+
+              <TouchableOpacity onPress={() => router.push("/checkout")}>
+                <View className="bg-green-600 py-4 rounded-full items-center justify-center">
+                  <Text className="text-white text-lg font-semibold">
+                    Checkout
+                  </Text>
                 </View>
-              </View>
-            )}
-            contentContainerStyle={{ paddingBottom: 50 }}
-          />
-
-          <View className="absolute bottom-0 left-5 right-5">
-            <TouchableOpacity onPress={() => router.push("/checkout")}>
-              <View className="flex-row mt-3 bg-green-500 py-4 rounded-full items-center justify-center gap-x-5">
-                <Text className="text-white text-xl font-semibold">
-                  Proceed to Order
-                </Text>
-                <Text className="text-base font-bold text-gray-700">
-                  Total: ₹
-                  {items.reduce(
-                    (total, item) => total + item.price * item.quantity,
-                    0
-                  )}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
-      )}
+      </ScrollView>
     </SafeAreaView>
   );
 }

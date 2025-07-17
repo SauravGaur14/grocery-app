@@ -4,6 +4,9 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState({});
+  const discountPercentage = 10; // 10% discount
+  const deliveryCharges = 50;
+  const platformFee = 20;
 
   const addItem = (item) => {
     setCart((prev) => ({
@@ -23,8 +26,33 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => setCart({});
 
+  const getSubtotal = () => {
+    return Object.values(cart).reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+  };
+
+  const getTotalAmount = () => {
+    const subtotal = getSubtotal();
+    const discount = (subtotal * discountPercentage) / 100;
+    return subtotal - discount + deliveryCharges + platformFee;
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addItem, removeItem, clearCart }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        addItem,
+        removeItem,
+        clearCart,
+        getSubtotal,
+        getTotalAmount,
+        discountPercentage,
+        deliveryCharges,
+        platformFee,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

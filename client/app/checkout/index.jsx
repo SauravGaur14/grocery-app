@@ -1,8 +1,8 @@
-import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import BillingSummary from "../../src/components/BillingSummary";
 import AddressModal from "../../src/components/order/address";
 import PaymentModal from "../../src/components/order/payment";
 import { useCart } from "../../src/context/CartContext";
@@ -33,6 +33,7 @@ export default function CheckoutScreen() {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
 
   const isAddressComplete = ["houseNumber", "city", "state", "pincode"].every(
     (key) => String(addressFields[key] ?? "").trim() !== ""
@@ -83,21 +84,41 @@ export default function CheckoutScreen() {
     <SafeAreaView className="flex-1 bg-gray-50 p-5">
       {/* Header with Back Button */}
       <View className="flex-row items-center mb-4">
-        <TouchableOpacity onPress={() => router.push("/(tabs)/cart")}>
-          <Feather name="arrow-left" size={20} color="black" />
-        </TouchableOpacity>
-        <Text className="text-2xl font-bold ml-2">Checkout</Text>
+        <Text className="text-3xl font-bold">Checkout</Text>
+      </View>
+
+      {/* Order Summary Card */}
+      <View className="mb-5">
+        <Text className="text-2xl font-semibold mb-2 text-green-700">
+          Order Summary
+        </Text>
+        <BillingSummary />
+      </View>
+
+      {/* Payment Summary Card */}
+      <View className="pb-2 border-t pt-4 border-gray-200">
+        <Text className="text-2xl font-semibold mb-5 text-green-700">
+          Payment Method
+        </Text>
+        <PaymentModal
+          visible={true}
+          onClose={() => {}}
+          selected={selectedPayment}
+          setSelected={setSelectedPayment}
+        />
       </View>
 
       {/* Address Summary Card */}
-      <View className="mb-10 mt-5">
+      <View className="mb-10 pt-4 border-t border-gray-200">
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-2xl font-semibold text-green-700">
-            Delivery Address
+            Delivering To
           </Text>
           <TouchableOpacity
-            onPress={() => setShowAddressModal(true)}
-            className=""
+            onPress={() => {
+              setSelectedAddressIndex(0);
+              setShowAddressModal(true);
+            }}
           >
             <Text className="text-green-600 font-semibold text-xl">Edit</Text>
           </TouchableOpacity>
@@ -116,53 +137,6 @@ export default function CheckoutScreen() {
           <Text className="text-gray-500 italic">No address provided</Text>
         )}
       </View>
-
-      <View className="mb-10 pt-4 border-t border-gray-200">
-        <Text className="text-2xl font-semibold mb-2 text-green-700">
-          Order Summary
-        </Text>
-        {cartItems.length > 0 ? (
-          <View className="flex-row items-center justify-between mt-3">
-            <Text className="text-gray-700 text-lg mb-1">
-              {cartItems.length} item{cartItems.length > 1 ? "s" : ""}
-            </Text>
-            <Text className="text-gray-800 text-xl font-bold">
-              ₹{totalAmount}
-            </Text>
-          </View>
-        ) : (
-          <Text className="text-gray-500 italic">No items in cart</Text>
-        )}
-      </View>
-
-      {/* Payment Summary Card */}
-      <View className="mb-5 pb-2 border-t pt-4 border-gray-200">
-        <Text className="text-2xl font-semibold mb-5 text-green-700">
-          Payment Method
-        </Text>
-        <PaymentModal
-          visible={true}
-          onClose={() => {}}
-          selected={selectedPayment}
-          setSelected={setSelectedPayment}
-        />
-      </View>
-      {/* <View className="mb-5 pb-2">
-        <Text className="text-lg font-semibold mb-2">Payment Method</Text>
-        {selectedPayment ? (
-          <Text className="text-gray-700">{selectedPayment}</Text>
-        ) : (
-          <Text className="text-gray-500 italic">
-            No payment method selected
-          </Text>
-        )}
-        <TouchableOpacity
-          onPress={() => setShowPaymentModal(true)}
-          className="mt-3"
-        >
-          <Text className="text-green-600 font-medium">Edit</Text>
-        </TouchableOpacity>
-      </View> */}
 
       {/* Place Order Button */}
       <View className="absolute bottom-0 left-0 right-0 px-5 pb-6 bg-gray-50">
@@ -183,6 +157,8 @@ export default function CheckoutScreen() {
         onClose={() => setShowAddressModal(false)}
         addressFields={addressFields}
         setAddressFields={setAddressFields}
+        selectedAddressIndex={selectedAddressIndex}
+        setSelectedAddressIndex={setSelectedAddressIndex}
       />
     </SafeAreaView>
   );

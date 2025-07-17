@@ -10,13 +10,11 @@ export default function PaymentModal({
 }) {
   return (
     <View className="">
-      {/* <Text className="text-lg font-bold mb-4">Select Payment Method</Text> */}
-
       {methods.map((method, idx) => (
         <TouchableOpacity
           key={idx}
           onPress={() => setSelected(method)}
-          className={`p-4 border rounded-full mb-4 ${
+          className={`px-4 py-3 border rounded-full mb-4 ${
             selected === method
               ? "border-green-500 bg-green-50"
               : "border-gray-300"
