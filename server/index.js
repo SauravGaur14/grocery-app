@@ -12,8 +12,6 @@ const client = twilio(
   process.env.TWILIO_AUTH_TOKEN
 );
 const VERIFY_SERVICE_SID = process.env.TWILIO_VERIFY_SERVICE_SID;
-
-
 // ✅ Send OTP
 app.post("/send-otp", async (req, res) => {
   const { phone } = req.body;
@@ -35,10 +33,8 @@ app.post("/send-otp", async (req, res) => {
   }
 });
 
-
 app.post("/verify-otp", async (req, res) => {
   const { phone, otp } = req.body;
-
   if (!phone || !otp) {
     return res.status(400).json({ error: "Phone and OTP are required" });
   }

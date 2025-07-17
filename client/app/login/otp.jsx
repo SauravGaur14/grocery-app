@@ -37,11 +37,12 @@ export default function OtpScreen() {
     }
 
     try {
+      console.log("trying to verify otp", otp);
       const response = await axios.post(`${API_BASE_URL}/verify-otp`, {
         phone: `+91${phone}`,
         otp: otp.trim(),
       });
-
+      console.log("req sent respons recieved");
       if (response.data.success) {
         await login(`+91${phone}`);
         router.replace("/");

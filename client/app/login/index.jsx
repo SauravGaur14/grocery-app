@@ -36,18 +36,16 @@ export default function LoginScreen() {
     }
 
     try {
+      console.log("sending otp");
       const response = await axios.post(`${API_BASE_URL}/send-otp`, {
         phone: `+91${phone}`,
       });
-
-      // Optionally store OTP in dev for testing
-      const { otp } = response.data;
+      console.log("otp sent");
 
       router.push({
         pathname: "/login/otp",
         params: {
           phone,
-          otp: otp?.toString() || "", // for dev only — remove in prod
         },
       });
     } catch (err) {

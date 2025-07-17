@@ -71,6 +71,8 @@ export const UserProvider = ({ children }) => {
           city: city || "Unknown City",
           state: region || "Unknown State",
           pincode: postalCode || "000000",
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
         };
 
         setUser((prev) => ({
@@ -90,36 +92,106 @@ export const UserProvider = ({ children }) => {
     }
   }, [user?.phone, hasFetchedLocation]);
 
-const addAddress = (addressObj) => {
-  if (
-    addressObj &&
-    addressObj.houseNumber &&
-    addressObj.city &&
-    addressObj.state &&
-    addressObj.pincode
-  ) {
+  const addAddress = async (addressObj) => {
+    const isValid =
+      addressObj &&
+      addressObj.houseNumber &&
+      addressObj.city &&
+      addressObj.state &&
+      addressObj.pincode;
+
+    if (!isValid) {
+      console.warn("Invalid address object passed to addAddress.");
+      return null;
+    }
+
+    let finalAddress = { ...addressObj };
+
+    // If lat/lng are missing, geocode the address
+    if (!finalAddress.latitude || !finalAddress.longitude) {
+      try {
+        const [location] = await Location.geocodeAsync(
+          `${finalAddress.houseNumber}, ${finalAddress.city}, ${finalAddress.state}, ${finalAddress.pincode}`
+        );
+
+        if (!location) {
+          console.warn("Geocoding failed — could not fetch coordinates.");
+          return null;
+        }
+
+        finalAddress.latitude = location.latitude;
+        finalAddress.longitude = location.longitude;
+      } catch (err) {
+        console.error("Geocoding error:", err);
+        return null;
+      }
+    }
+
     setUser((prev) => {
       const alreadyExists = prev.addresses.some(
         (addr) =>
-          addr.latitude === addressObj.latitude &&
-          addr.longitude === addressObj.longitude
+          addr.latitude === finalAddress.latitude &&
+          addr.longitude === finalAddress.longitude
       );
 
       const updated = {
         ...prev,
         addresses: alreadyExists
           ? prev.addresses
-          : [...prev.addresses, addressObj],
+          : [...prev.addresses, finalAddress],
       };
+
       return updated;
     });
-    return addressObj;
-  } else {
-    console.warn("Invalid address object passed to addAddress.");
-    return null;
-  }
-};
 
+    return finalAddress;
+  };
+
+  const updateAddress = async (index, updatedFields) => {
+    if (!user || !user.addresses[index]) {
+      console.warn("Invalid address index");
+      return;
+    }
+
+    const current = user.addresses[index];
+
+    // Merge the updated fields with the current address
+    const merged = {
+      ...current,
+      ...updatedFields,
+    };
+
+    // Always re-geocode the updated address to get fresh coordinates
+    try {
+      const [location] = await Location.geocodeAsync(
+        `${merged.houseNumber}, ${merged.city}, ${merged.state}, ${merged.pincode}`
+      );
+
+      if (!location) {
+        console.warn("Failed to geocode updated address");
+        return;
+      }
+
+      merged.latitude = location.latitude;
+      merged.longitude = location.longitude;
+
+      // Update user state with new address
+      setUser((prev) => {
+        const newAddresses = [...prev.addresses];
+        newAddresses[index] = merged;
+
+        return {
+          ...prev,
+          addresses: newAddresses,
+        };
+      });
+
+      return merged;
+    } catch (err) {
+      console.error("Geocoding failed during address update:", err);
+      return;
+    }
+  };
 
   const login = async (phoneNumber) => {
     const authData = { phone: phoneNumber };
@@ -145,6 +217,7 @@ const addAddress = (addressObj) => {
         user,
         setUser,
         addAddress,
+        updateAddress,
         login,
         logout,
         locationPermissionGranted,
