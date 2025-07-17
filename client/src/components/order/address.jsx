@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   FlatList,
   Modal,
@@ -17,9 +17,10 @@ export default function AddressModal({
   onClose,
   addressFields,
   setAddressFields,
+  selectedAddressIndex,
+  setSelectedAddressIndex,
 }) {
-  const { user, addAddress } = useUser();
-  const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
+  const { user, addAddress, updateAddress } = useUser();
 
   const isFormComplete = ["houseNumber", "city", "state", "pincode"].every(
     (key) => String(addressFields[key] ?? "").trim() !== ""
@@ -45,6 +46,7 @@ export default function AddressModal({
       params: {
         latitude: addressFields?.latitude ?? "",
         longitude: addressFields?.longitude ?? "",
+         index: selectedAddressIndex ?? "",
       },
     });
   };
@@ -53,9 +55,33 @@ export default function AddressModal({
     setAddressFields((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSave = () => {
-    addAddress(addressFields);
-    onClose();
+  const handleSave = async () => {
+    if (
+      addressFields.houseNumber &&
+      addressFields.city &&
+      addressFields.state &&
+      addressFields.pincode
+    ) {
+      let result;
+      if (
+        selectedAddressIndex != null &&
+        user.addresses[selectedAddressIndex]
+      ) {
+        result = await updateAddress(selectedAddressIndex, addressFields);
+      } else {
+        result = await addAddress(addressFields);
+      }
+
+      if (result) {
+        setAddressFields(result);
+        setSelectedAddressIndex(user.addresses.length);
+        onClose();
+      } else {
+        alert("Failed to save address.");
+      }
+    } else {
+      alert("Please fill all fields.");
+    }
   };
 
   const resetForm = () => {
@@ -80,8 +106,8 @@ export default function AddressModal({
   }, [visible, selectedAddressIndex]);
 
   // Combine saved addresses + Add New button
-  const addressList = [...user.addresses];
-  // const addressList = [...user.addresses, { isAddNew: true }];
+  // const addressList = [...user.addresses];
+  const addressList = [...user.addresses, { isAddNew: true }];
 
   return (
     <Modal visible={visible} animationType="slide" transparent>

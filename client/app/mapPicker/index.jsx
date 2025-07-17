@@ -31,10 +31,11 @@ export default function MapPicker() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  const { latitude, longitude } = useLocalSearchParams();
+  const { latitude, longitude, index } = useLocalSearchParams();
+  const parsedIndex = index !== undefined ? parseInt(index, 10) : null;
 
   const router = useRouter();
-  const { addAddress } = useUser();
+  const { user, addAddress, updateAddress } = useUser();
 
   // Initial location fetch
   useEffect(() => {
@@ -129,19 +130,33 @@ export default function MapPicker() {
     }
   };
 
-  const handleConfirm = () => {
-    if (address) {
-      const added = addAddress(address);
-      if (added) {
-        router.replace({
-          pathname: "/checkout",
-          params: {
-            selectedFromMap: JSON.stringify(added),
-          },
-        });
-      } else {
-        router.back();
+  const handleConfirm = async () => {
+    try {
+      if (address) {
+        let result;
+        if (
+          parsedIndex != null &&
+          !isNaN(parsedIndex) &&
+          user?.addresses?.[parsedIndex]
+        ) {
+          result = await updateAddress(parsedIndex, address);
+        } else {
+          result = await addAddress(address);
+        }
+
+        if (result) {
+          router.replace({
+            pathname: "/checkout",
+            params: {
+              selectedFromMap: JSON.stringify(result),
+            },
+          });
+        } else {
+          router.back();
+        }
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -157,6 +172,7 @@ export default function MapPicker() {
           },
         }
       );
+
       // setSuggestions(res.data);
       setSuggestions(
         res.data.filter(
