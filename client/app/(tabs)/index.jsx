@@ -33,9 +33,7 @@ export default function Home() {
         {/* Offer Card */}
         <View className="mx-5 rounded-xl h-52 border border-gray-100 overflow-hidden">
           <Image
-            source={{
-              uri: "https://s.tmimgcdn.com/scr/800x500/252400/umbrella-monsoon-sale-vector_252406-original.png",
-            }}
+            source={require("../../assets/images/banner/banner.jpeg")}
             className="w-full h-32"
             resizeMode="cover"
           />

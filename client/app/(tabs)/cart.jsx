@@ -12,14 +12,11 @@ import CartItem from "../../src/components/CartItem";
 import { useCart } from "../../src/context/CartContext";
 
 export default function Cart() {
-  const { cart } = useCart();
+  const { cart, getSubtotal } = useCart();
   const items = Object.values(cart);
   const router = useRouter();
 
-  const subtotal = items.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+  const subtotal = getSubtotal();
   const total = subtotal * 0.9;
 
   // Animated values

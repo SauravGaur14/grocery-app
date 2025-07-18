@@ -108,38 +108,37 @@ export default function CheckoutScreen() {
         />
       </View>
 
-      {/* Address Summary Card */}
-      <View className="mb-10 pt-4 border-t border-gray-200">
-        <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-2xl font-semibold text-green-700">
-            Delivering To
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              setSelectedAddressIndex(0);
-              setShowAddressModal(true);
-            }}
-          >
-            <Text className="text-green-600 font-semibold text-xl">Edit</Text>
-          </TouchableOpacity>
+      <View className="absolute bottom-0 left-0 right-0 px-5 pb-6 bg-gray-100 rounded-t-3xl">
+        {/* Address Summary Card */}
+        <View className="mb-5 pt-4 border-b border-gray-200">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-base font-semibold text-green-700">
+              Delivering To
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedAddressIndex(0);
+                setShowAddressModal(true);
+              }}
+            >
+              <Text className="text-green-600 font-semibold text-base">
+                Edit
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {isAddressComplete ? (
+            <>
+              <Text className="text-gray-700 text-base">
+                {addressFields.houseNumber}, {addressFields.city},{" "}
+                {addressFields.state} - {addressFields.pincode}
+              </Text>
+            </>
+          ) : (
+            <Text className="text-gray-500 italic">No address provided</Text>
+          )}
         </View>
-        {isAddressComplete ? (
-          <>
-            <Text className="text-gray-700 text-lg">
-              {addressFields.houseNumber}
-            </Text>
-            <Text className="text-gray-700 text-lg">
-              {addressFields.city}, {addressFields.state} -{" "}
-              {addressFields.pincode}
-            </Text>
-          </>
-        ) : (
-          <Text className="text-gray-500 italic">No address provided</Text>
-        )}
-      </View>
 
-      {/* Place Order Button */}
-      <View className="absolute bottom-0 left-0 right-0 px-5 pb-6 bg-gray-50">
+        {/* Place Order Button */}
         <TouchableOpacity
           disabled={!isReadyToPlace}
           onPress={handlePlaceOrder}

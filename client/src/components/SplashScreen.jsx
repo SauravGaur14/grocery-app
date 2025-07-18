@@ -6,7 +6,7 @@ export default function SplashScreen({ onFinish }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onFinish(); // trigger navigation after animation
-    }, 4000);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
